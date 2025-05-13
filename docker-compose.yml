@@ -10,7 +10,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
       - POSTGRES_DB=${POSTGRES_DB:-bacterial_classification}
     ports:
-      - ":5432"
+      - "${POSTGRES_HOST_PORT:-5437}:5432"
     healthcheck:
       test:
         [
@@ -32,19 +32,18 @@ services:
     environment:
       - DATABASE_URL=postgresql://bacterial_user:password@postgres:5432/bacterial_classification
       - SECRET_KEY=supersecretkey0123456789abcdefghijklm
-      - ENVIRONMENT=development 
+      - ENVIRONMENT=development
       - API_V1_STR=/api
       - PROJECT_NAME=Bacteria Classification API
       - CORS_ORIGINS=http://localhost:3000,http://localhost:8080
-      - PYTHONPATH=/app
-    command: python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     ports:
-      - "8000"
+      - "8111:8000"
     depends_on:
       postgres:
         condition: service_healthy
     networks:
       - backend-network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
   scraper:
     build:
