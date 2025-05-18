@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title=settings.PROJECT_NAME, openapi_url="/openapi.json", version="0.1.0")
 
-api_router = APIRouter(prefix=settings.API_V1_STR)
+api_router = APIRouter(prefix=settings.API_STR)
 
 
 if settings.CORS_ORIGINS:
@@ -80,4 +80,4 @@ logger.info(
     f"Application '{settings.PROJECT_NAME}' started. Environment: {settings.ENVIRONMENT}"
 )
 logger.info("OpenAPI docs available at /docs (relative to app root).")
-logger.info(f"All API endpoints are under '{settings.API_V1_STR}' prefix.")
+logger.info(f"All API endpoints are under '{settings.API_STR}' prefix.")

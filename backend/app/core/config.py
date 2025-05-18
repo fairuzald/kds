@@ -8,7 +8,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Bacteria Classification API"
-    API_V1_STR: str = "/api"
+    API_STR: str = "/api"
     ENVIRONMENT: str = "development"
     SECRET_KEY: str = secrets.token_urlsafe(32)
 
