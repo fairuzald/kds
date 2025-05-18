@@ -2,7 +2,12 @@ import logging
 from typing import Optional
 
 from app.api.deps import get_db
-from app.core.response import PaginatedResponseStructure, paginated_response
+from app.core.response import (
+    PaginatedResponseStructure,
+    StandardResponse,
+    paginated_response,
+    success_response,
+)
 from app.models.bacteria import Bacteria
 from app.schemas.bacteria import (
     BacteriaCreateSchema,
@@ -19,7 +24,9 @@ router = APIRouter()
 
 
 @router.post(
-    "", response_model=BacteriaResponseSchema, status_code=status.HTTP_201_CREATED
+    "",
+    response_model=StandardResponse[BacteriaResponseSchema],
+    status_code=status.HTTP_201_CREATED,
 )
 def create_bacteria_entry(
     *, db: SQLAlchemySession = Depends(get_db), bacteria_in: BacteriaCreateSchema
@@ -49,10 +56,14 @@ def create_bacteria_entry(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Database error: {str(e)}",
         )
-    return db_bacteria
+    return success_response(
+        data=db_bacteria, message="Bacteria entry created successfully."
+    )
 
 
-@router.get("/{bacteria_obj_id}", response_model=BacteriaResponseSchema)
+@router.get(
+    "/{bacteria_obj_id}", response_model=StandardResponse[BacteriaResponseSchema]
+)
 def get_bacteria_by_db_id(
     bacteria_obj_id: int, db: SQLAlchemySession = Depends(get_db)
 ):
@@ -62,10 +73,15 @@ def get_bacteria_by_db_id(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Bacteria (by DB ID) not found",
         )
-    return bacteria
+    return success_response(
+        data=bacteria, message="Bacteria (by DB ID) retrieved successfully."
+    )
 
 
-@router.get("/search/id/{bacteria_unique_id}", response_model=BacteriaResponseSchema)
+@router.get(
+    "/search/id/{bacteria_unique_id}",
+    response_model=StandardResponse[BacteriaResponseSchema],
+)
 def get_bacteria_by_unique_id(
     bacteria_unique_id: str, db: SQLAlchemySession = Depends(get_db)
 ):
@@ -77,7 +93,10 @@ def get_bacteria_by_unique_id(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Bacteria (by unique bacteria_id) not found",
         )
-    return bacteria
+    return success_response(
+        data=bacteria,
+        message="Bacteria (by unique bacteria_id) retrieved successfully.",
+    )
 
 
 @router.get("", response_model=PaginatedResponseStructure[BacteriaResponseSchema])
@@ -143,7 +162,9 @@ def list_bacteria(
     )
 
 
-@router.put("/{bacteria_obj_id}", response_model=BacteriaResponseSchema)
+@router.put(
+    "/{bacteria_obj_id}", response_model=StandardResponse[BacteriaResponseSchema]
+)
 def update_bacteria_entry(
     bacteria_obj_id: int,
     *,
@@ -178,7 +199,9 @@ def update_bacteria_entry(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Database error on update: {str(e)}",
         )
-    return db_bacteria
+    return success_response(
+        data=db_bacteria, message="Bacteria entry updated successfully."
+    )
 
 
 @router.delete("/{bacteria_obj_id}", status_code=status.HTTP_204_NO_CONTENT)

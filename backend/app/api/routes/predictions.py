@@ -1,4 +1,5 @@
 from app.api.deps import get_db
+from app.core.response import StandardResponse, success_response
 from app.ml.model_service import model_service
 from app.models.bacteria import Bacteria
 from app.schemas.bacteria import (
@@ -13,7 +14,9 @@ from sqlalchemy.orm import Session as SQLAlchemySession
 router = APIRouter()
 
 
-@router.post("/predict", response_model=BacteriaPredictionResponseDataSchema)
+@router.post(
+    "/predict", response_model=StandardResponse[BacteriaPredictionResponseDataSchema]
+)
 def predict_bacteria_pathogenicity(
     *,
     db: SQLAlchemySession = Depends(get_db),
@@ -57,10 +60,12 @@ def predict_bacteria_pathogenicity(
                 f"Error converting similar bacteria to schema: {e}, data: {sim_bact_dict}"
             )
 
-    response_data = BacteriaPredictionResponseDataSchema(
+    response_data_obj = BacteriaPredictionResponseDataSchema(
         input_bacteria=bacteria_input,
         is_pathogen_prediction=bool(prediction_label),
         pathogen_probability=float(probability),
         similar_bacteria=similar_bacteria_response,
     )
-    return response_data
+    return success_response(
+        data=response_data_obj, message="Bacteria pathogenicity prediction successful."
+    )
