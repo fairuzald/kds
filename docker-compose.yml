@@ -44,7 +44,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    volumes:
+    # volumes:
       # - ./frontend:/usr/src/app
       # - /usr/src/app/node_modules
     ports:
