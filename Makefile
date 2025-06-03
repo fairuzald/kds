@@ -3,7 +3,10 @@
 # Default environment file
 ENV_FILE ?= .env
 
-up: ## Start all services in detached mode
+up:
+	docker-compose --env-file $(ENV_FILE) up -d postgres backend frontend
+
+up-all:
 	docker-compose --env-file $(ENV_FILE) up -d
 
 down: ## Stop and remove all services, networks, and volumes
